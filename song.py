@@ -5,14 +5,15 @@ from mutagen.mp3 import MP3
 from mutagen.id3 import ID3, USLT, Encoding
 from mutagen import MutagenError
 
-token = 'Genius_APIToken_Here'
+token = 'GeniusTokenHere'
 genius = lyricsgenius.Genius(token)
 
 class Cancion:
 
-    def __init__(self, archivo):
+    def __init__(self, archivo, buscar):
 
         self.archivo = archivo
+        self.buscar = buscar
         esValido = False
         tieneLetra = False
         self.esFlac = False
@@ -20,20 +21,20 @@ class Cancion:
 
         try:
             # Es un archivo flac
-            song = FLAC(archivo)
+            self.song = FLAC(archivo)
 
             self.esFlac = True
 
             try:
-                so = song["LYRICS"]
+                so = self.song["LYRICS"]
                 tieneLetra = True
             except:
                 tieneLetra = False
                 esValido = True
 
                 try:
-                    artista = song["artist"]
-                    nombreCancion = song["title"]
+                    artista = self.song["artist"]
+                    nombreCancion = self.song["title"]
 
                     artista = artista[0]
                     nombreCancion = nombreCancion[0]
@@ -73,14 +74,25 @@ class Cancion:
             self.letra = ['archivoInvalido']
         elif tieneLetra == True:
             self.letra = ['archivoTieneLetra']
+            
+            if self.esFlac:
+                
+                self.lyrics = self.song['LYRICS']
+
+            elif self.esMp3:
+
+                self.lyrics = song.getall('USLT')[0]
 
         else:
 
-            self.cancion = genius.search_song(nombreCancion, artista, get_full_info=False)
-            try:
-                self.letra = [self.cancion.lyrics]
-            except:
-                self.letra = ['letraNoEncontrada']
+            if buscar:
 
-    def obtener_archivo(self):
-        return self.archivo_cancion
+                self.cancion = genius.search_song(nombreCancion, artista, get_full_info=False)
+                try:
+                    self.letra = [self.cancion.lyrics]
+                except:
+                    self.letra = ['letraNoEncontrada']
+            
+            else:
+
+                self.letra = ['noTieneLetra'] # it has no lyrics for discard (tieneLetra==False in this case)
