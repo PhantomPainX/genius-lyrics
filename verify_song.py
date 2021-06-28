@@ -1,13 +1,20 @@
 #Code to verify if the song has lyrics.
 
 import os, sys
+import os.path
 import song as s
 
 repetir = True
+ruta_error = ""
+rec = False
 
 while repetir:
 
     os.system('clear')
+
+    if rec:
+        print(ruta_error)
+        print('')
 
     print("Formatos: .mp3 .flac")
     print("Si el archivo tiene letra, esta se mostrara")
@@ -17,18 +24,29 @@ while repetir:
 
     if ".mp3" in ruta_cancion or ".flac" in ruta_cancion:
 
-        archivo = s.Cancion(ruta_cancion, False)
+        if os.path.exists(ruta_cancion):
 
-        val = archivo.letra[0]
+            archivo = s.Cancion(ruta_cancion, False)
 
-        if val == "archivoTieneLetra":
+            val = archivo.letra[0]
 
-            print(archivo.lyrics)
+            if val == "archivoTieneLetra":
+
+                print(archivo.lyrics)
+
+            else:
+                print("No tiene letra")
+
+            rec = False
 
         else:
-            print("No tiene letra")
+            rec = True
+            ruta_error = "El archivo no existe"
+            continue
 
     else:
+        rec = True
+        ruta_error = "La ruta no es un archivo valido"
         continue
 
     print('')
