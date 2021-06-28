@@ -1,4 +1,5 @@
 import os, sys
+import os.path
 import song as s
 from mutagen.id3 import USLT, Encoding
 import time
@@ -16,23 +17,13 @@ while repetir:
     ruta = str(input("Ingrese la ruta de la cancion(es): "))
 
 
-    if "\\" in ruta or "/" in ruta:
+    if os.path.exists(ruta):
 
         if ".mp3" in ruta or ".flac" in ruta:
 
             song = s.Cancion(ruta, True)
 
-            if song.letra[0] == 'archivoInvalido':
-                error += 1
-                continue
-            elif song.letra[0] == 'archivoTieneLetra':
-                error += 1
-                continue
-            elif song.letra[0] == 'letraNoEncontrada':
-                error += 1
-                continue
-
-            else:
+            if not song.letra[0] == 'archivoInvalido' and not song.letra[0] == 'archivoTieneLetra':
                 if song.esFlac:
 
                     song.archivo_cancion['LYRICS'] = song.letra[0]
@@ -44,6 +35,9 @@ while repetir:
                     song.archivo_cancion.save()
                     
                 agregado_lyric += 1
+            
+            else:
+                error += 1
 
         else:
 
@@ -111,7 +105,7 @@ while repetir:
                 continue
 
     else:
-
-        print("Ingrese una ruta valida.")
-        time.sleep(1)
+        print('')
+        print("El directorio o archivo no existe.")
+        time.sleep(1.5)
         continue
