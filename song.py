@@ -1,4 +1,4 @@
-import lyricsgenius, pykakasi
+import lyricsgenius
 from lyricsgenius.api.public_methods import song
 from mutagen.flac import FLAC
 from mutagen.mp3 import MP3
